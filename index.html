@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script src="Jquery.js"></script>
+    <!--<script src="jquerytransit.js"></script>-->
+    <script>
+        var newdiv,heightmove,removeit,completedboxes=0,noofboxes=0,ek;
+        var array=[0],ids=[0],inprogress=false;
+
+        function create(){
+            noofboxes=noofboxes+1;
+            array.push(document.getElementById("input").value);
+            ids.push(noofboxes);
+            document.getElementById("thisarray").innerHTML=array;
+            document.getElementById("theseids").innerHTML=ids;
+            //$(p).innerHTML=array;
+            newdiv = document.createElement("p");
+            newdiv.className="inner";
+            newdiv.id=noofboxes;
+            document.getElementById("outer").appendChild(newdiv);
+            newdiv.innerHTML=array[array.length-1];
+            var itscolor=250-newdiv.innerHTML*2.5
+            newdiv.style.backgroundColor="rgba("+itscolor+", 14, 14, 0.562)";
+            ek=newdiv.innerHTML/10;
+            //heightmove=350-50*(noofboxes-completedboxes);    
+            heightmove=350-50*(array.length-1);
+            $("#"+noofboxes).animate({
+                top: "+="+heightmove+"px",
+            },1000,function(){
+                //completetask(completedboxes+1);      
+                //completetask(2);   
+                if(inprogress==false){ 
+                    if(document.getElementById("type").value=="FCFS")
+                        fcfs();
+                    if(document.getElementById("type").value=="SJF")
+                        sjf();
+                    inprogress=true;
+                }
+            }); 
+        }
+
+        var x;
+        function fcfs(){
+            //x=completedboxes+1;   
+            removingit(1);
+        }
+        function sjf(){
+            x=1;
+            for(let k=1;k<array.length;k++)
+                if(array[x] > array[k])
+                    x=k;  
+            removingit(x);
+        } 
+        var word2;
+        function removingit(y){
+            word2="#"+ids[y];
+            //document.getElementById(ids[y]).style.transitionDuration=array[y]/10+"s";document.getElementById(ids[y]).innerHTML*1000 
+            //$(word2).css({transition:"boxShadow,inset 100px 0 0 0 white"});   
+            $(word2).animate({width:"0px",fontSize:"0px",borderRadius:"0px"},array[y]*100);   
+            //document.getElementById(ids[y]).style.boxShadow="inset 100px 0 0 0 white";
+            setTimeout(function(){
+                removeit = document.getElementById(ids[y]);
+                removeit.remove();
+                //array.shift(); 
+                array.splice(y,1);
+                ids.splice(y,1);
+                //ids.shift();  
+                document.getElementById("thisarray").innerHTML=array;
+                document.getElementById("theseids").innerHTML=ids;
+                completedboxes=completedboxes+1;
+                inprogress=false;
+                 gravitywork(y);
+            },array[y]*100);
+        }
+        var words;
+       function gravitywork(z){
+            for(m=z+1;m<array.length;m++) {
+                words="#"+ids[m];
+                $(words).animate({
+                    top: "+=50px",
+                },1000,function(){
+                    //selecting();
+                });
+            }  
+                words="#"+ids[z];// start here
+                $(words).animate({
+                    top: "+=50px",
+                },500,function(){
+                    if(document.getElementById("type").value=="FCFS")
+                        fcfs();
+                    if(document.getElementById("type").value=="SJF")
+                        sjf();
+                    inprogress=true;
+                });
+            if(z==array.length){
+                if(document.getElementById("type").value=="FCFS")
+                    fcfs();
+                if(document.getElementById("type").value=="SJF")
+                    sjf(); 
+            }
+        }
+    </script>
+    <input type="number" id="input" ></input> 
+    <div id ="outer" class="outer"> </div>
+    <button id="press" onclick="create()">Submit</button>
+    <p id="thisarray"></p>
+    <p id="theseids"></p>
+    <select name="Type" id="type">
+        <option value="FCFS">FCFS</option>
+        <option value="SJF">SJF</option>
+    </select>
+
+    <style>
+        #outer{
+            height: 253px;
+            width:120px;
+            margin: 10px;
+            border-style :solid;
+            border-top: 0px;
+            border-width: 3px;
+            border-radius:0px 0px 10px 10px;
+            position:absolute;
+            top:200px;
+            left:200px;
+        }
+        .inner{
+            height: 40px;
+            width:109px;
+            top:-100px;
+            margin: 5px;
+            right:1px;
+            border-style :solid;
+            border-width: 0px;
+            border-radius:30px;
+            position:absolute;
+            text-align: center;
+            background-color: rgba(171, 14, 14, 0.562);
+            font-size: 20px;
+            color:white;
+            box-shadow:inset 0px 0px 0px 0px white;
+            transition-delay: 0;
+        }
+        .inner:hover{
+            box-shadow: inset 100px 0 0 0 white;
+        }
+    </style>
+</body>
+</html>
